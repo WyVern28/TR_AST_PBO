@@ -204,11 +204,31 @@ public class loginPage extends javax.swing.JFrame {
     }//GEN-LAST:event_lupaPasswordBtnActionPerformed
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-
-
-        // else{
-        //     JOptionPane.showMessageDialog(rootPane, "Login Gagal", "Login", JOptionPane.ERROR_MESSAGE);
-        // }
+        String username = inputUsername.getText();
+        String password = new String(inputPassword.getPassword());
+        
+        // Validasi input tidak boleh kosong
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Username dan Password tidak boleh kosong", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Validasi login (username: admin, password: admin)
+        if (username.equals("admin") && password.equals("admin")) {
+            // Login berhasil
+            new adminPage().setVisible(true);
+            this.dispose();
+        }
+        //klo username nya salah, muncul pesan error username salah
+        else if (!username.equals("admin")) {
+            JOptionPane.showMessageDialog(rootPane, "Username salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+            inputPassword.setText("");
+        }
+        //klo password nya salah, muncul pesan error password salah
+        else {
+            JOptionPane.showMessageDialog(rootPane, "Password salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+            inputPassword.setText("");
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void darkModeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggleActionPerformed
