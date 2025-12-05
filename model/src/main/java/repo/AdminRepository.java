@@ -1,0 +1,27 @@
+package repo;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import db_config.db_con;
+import objek.Admin;
+
+public class AdminRepository {
+    public Admin getAdminById(String id){
+        String sql = "select id_admin,nama from admin where id_admin = ?";
+        Admin admin = null;
+        try(Connection conn = db_con.getConn();PreparedStatement prep = conn.prepareStatement(sql)) {
+            prep.setString(1, id);
+            ResultSet res = prep.executeQuery();
+            if(res.next()){
+                admin = new Admin(res.getString("id_admin"), res.getString("nama"));
+            }
+        } catch (SQLException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return admin;
+    }
+}
