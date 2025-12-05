@@ -176,7 +176,7 @@ public class adminPage extends javax.swing.JFrame {
                     .addComponent(editBtn)
                     .addComponent(deleteBtn)
                     .addComponent(cancelBtn))
-                .addContainerGap(476, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
 
         mainPanel.add(panelEdit, java.awt.BorderLayout.WEST);
