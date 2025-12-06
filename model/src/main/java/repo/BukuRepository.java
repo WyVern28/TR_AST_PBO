@@ -147,4 +147,21 @@ public class BukuRepository {
         }
         return false;
     }
+
+    public Buku cekBuku(String penulis, String nama_buku){
+        String sql = "select id_buku,penulis,nama_buku,stok,tanggal_terbit from buku where penulis = ? and nama_buku = ?";
+        Buku buku = null;
+        try (Connection conn = db_con.getConn();PreparedStatement prep = conn.prepareStatement(sql)) {
+            prep.setString(1, penulis);
+            prep.setString(2, nama_buku);
+            ResultSet res = prep.executeQuery();
+            if(res.next()){
+                buku = mapToBuku(res);
+            }
+        } catch (SQLException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return buku;
+    }
 }

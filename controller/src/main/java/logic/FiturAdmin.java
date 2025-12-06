@@ -111,11 +111,9 @@ public class FiturAdmin {
      */
     public boolean cekAdaBuku(String penulis,String nama_buku,int stok){
         BukuRepository bukuRepo = new BukuRepository();
-        List<Buku> listBuku = bukuRepo.getAllBuku();
-        for(Buku buku : listBuku){
-            if(buku.getPenulis().toLowerCase().equals(penulis.toLowerCase()) && buku.getNama_buku().toLowerCase().equals(nama_buku.toLowerCase())){
-                return bukuRepo.changeStock(buku.getId_buku(), stok + buku.getStok());   
-            }
+        Buku buku = bukuRepo.cekBuku(penulis, nama_buku);
+        if(buku != null){
+            return bukuRepo.changeStock(buku.getId_buku(),buku.getStok()+stok);
         }
         return false;
     }
