@@ -1,6 +1,7 @@
 package DTO;
 
 public class PinjamDTO {
+    private String id_anggota;
     private String nama_anggota;
     private String nama_buku;
     private int jumlah_buku;
@@ -9,7 +10,8 @@ public class PinjamDTO {
     private String deadline;
     private String status;
     
-    public PinjamDTO(String nama_anggota, String nama_buku, int jumlah_buku, String tanggal_pinjam,String tanggal_kembali, String deadline, String status) {
+    public PinjamDTO(String id_anggota, String nama_anggota, String nama_buku, int jumlah_buku, String tanggal_pinjam, String deadline, String tanggal_kembali, String status) {
+        this.id_anggota = id_anggota;
         this.nama_anggota = nama_anggota;
         this.nama_buku = nama_buku;
         this.jumlah_buku = jumlah_buku;
@@ -19,6 +21,9 @@ public class PinjamDTO {
         this.status = status;
     }
     
+    public String getId_anggota() {
+        return id_anggota;
+    }
     public String getNama_anggota() {
         return nama_anggota;
     }

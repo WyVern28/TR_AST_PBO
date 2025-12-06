@@ -3,10 +3,12 @@ package logic;
 import java.util.Collections;
 import java.util.List;
 
+import DTO.PinjamDTO;
 import objek.Anggota;
 import objek.Buku;
 import repo.AnggotaRepository;
 import repo.BukuRepository;
+import repo.PinjamRepository;
 import repo.UsersRepository;
 
 public class FiturAdmin {
@@ -172,5 +174,19 @@ public class FiturAdmin {
             return 200;
         }
         return 500;
+    }
+
+    /**
+     * 
+     * @return -> list kosong -> kalo ga ada list pinjam sama sekali
+     * @return -> List<PinjamDTO> -> kalo ada list
+     */
+    public List<PinjamDTO> getAllPinjam(){
+        PinjamRepository pinjamRepo = new PinjamRepository();
+        List<PinjamDTO> listPinjam = pinjamRepo.getAllPinjam();
+        if(listPinjam == null || listPinjam.isEmpty()){
+            return Collections.emptyList();
+        }
+        return listPinjam;
     }
 }
