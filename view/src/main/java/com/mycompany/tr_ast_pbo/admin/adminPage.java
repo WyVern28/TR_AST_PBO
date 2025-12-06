@@ -7,6 +7,9 @@ package com.mycompany.tr_ast_pbo.admin;
 import java.awt.Color;
 import javax.swing.JFrame;
 import com.mycompany.tr_ast_pbo.DarkMode;
+import java.awt.CardLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -22,19 +25,34 @@ public class adminPage extends javax.swing.JFrame {
     public adminPage() {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
-        // Setup dark mode toggle listeners
-        darkModeToggle.addActionListener(evt -> darkModeToggleActionPerformed(evt));
-        darkModeToggle1.addActionListener(evt -> jToggleButton2ActionPerformed(evt));
-        
         setDarkMode(DarkMode.isDarkMode);
+        jScrollPane1.getViewport().setOpaque(false);
+        jScrollPane2.getViewport().setOpaque(false);
+        
+        CardLayout cl = (CardLayout) panelEdit.getLayout();
+        
+        tabPanel.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                // Cek index tab yang dipilih
+                int index = tabPanel.getSelectedIndex();
+                
+                if (index == 0) {
+                    // Jika Tab 0 (Anggota) dipilih -> Tampilkan panel anggota
+                    cl.show(panelEdit, "cardAnggota"); 
+                } else if (index == 1) {
+                    // Jika Tab 1 (Buku) dipilih -> Tampilkan panel buku
+                    cl.show(panelEdit, "cardBuku");
+                }
+            }
+        });
     }
     
     private void setDarkMode(boolean isDark) {
         if(isDark){
             jPanel1.setBackground(new Color(44, 44, 44));
             mainPanel.setBackground(new Color(44, 44, 44));
-            jPanel2.setBackground(new Color(44, 44, 44));
+            panelEdit.setBackground(new Color(44, 44, 44));
             panelEditAnggota.setBackground(new Color(44, 44, 44));
             panelEditBuku.setBackground(new Color(44, 44, 44));
             tablePanel.setBackground(new Color(44, 44, 44));
@@ -48,10 +66,19 @@ public class adminPage extends javax.swing.JFrame {
             penulis.setForeground(Color.WHITE);
             stok.setForeground(Color.WHITE);
             tglTerbit.setForeground(Color.WHITE);
+            
+            tableAnggota.setBackground(new Color(44, 44, 44));
+            tableAnggota.setForeground(Color.WHITE);
+            tableAnggota.setGridColor(Color.WHITE);
+            
+            tableBuku.setBackground(new Color(44, 44, 44));
+            tableBuku.setForeground(Color.WHITE);
+            tableBuku.setGridColor(Color.WHITE);
+        
         }else{
             jPanel1.setBackground(new Color(249, 248, 246));
             mainPanel.setBackground(new Color(249, 248, 246));
-            jPanel2.setBackground(new Color(249, 248, 246));
+            panelEdit.setBackground(new Color(249, 248, 246));
             panelEditAnggota.setBackground(new Color(249, 248, 246));
             panelEditBuku.setBackground(new Color(249, 248, 246));
             tablePanel.setBackground(new Color(249, 248, 246));
@@ -65,6 +92,14 @@ public class adminPage extends javax.swing.JFrame {
             penulis.setForeground(Color.BLACK);
             stok.setForeground(Color.BLACK);
             tglTerbit.setForeground(Color.BLACK);
+            
+            tableAnggota.setBackground(new Color(249, 248, 246));
+            tableAnggota.setForeground(Color.BLACK);
+            tableAnggota.setGridColor(Color.BLACK);
+            
+            tableBuku.setBackground(new Color(249, 248, 246));
+            tableBuku.setForeground(Color.BLACK);
+            tableBuku.setGridColor(Color.BLACK);
         }
     }
 
@@ -80,7 +115,7 @@ public class adminPage extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         perpus = new javax.swing.JLabel();
         mainPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        panelEdit = new javax.swing.JPanel();
         panelEditAnggota = new javax.swing.JPanel();
         judulMenuAnggota = new javax.swing.JLabel();
         namaAnggota = new javax.swing.JLabel();
@@ -129,8 +164,8 @@ public class adminPage extends javax.swing.JFrame {
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setPreferredSize(new java.awt.Dimension(400, 539));
-        jPanel2.setLayout(new java.awt.CardLayout());
+        panelEdit.setPreferredSize(new java.awt.Dimension(400, 539));
+        panelEdit.setLayout(new java.awt.CardLayout());
 
         panelEditAnggota.setPreferredSize(new java.awt.Dimension(400, 300));
 
@@ -169,6 +204,11 @@ public class adminPage extends javax.swing.JFrame {
         });
 
         darkModeToggle1.setText("Dark Mode");
+        darkModeToggle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkModeToggle1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelEditAnggotaLayout = new javax.swing.GroupLayout(panelEditAnggota);
         panelEditAnggota.setLayout(panelEditAnggotaLayout);
@@ -226,7 +266,7 @@ public class adminPage extends javax.swing.JFrame {
                 .addContainerGap(295, Short.MAX_VALUE))
         );
 
-        jPanel2.add(panelEditAnggota, "cardAnggota");
+        panelEdit.add(panelEditAnggota, "cardAnggota");
 
         panelEditBuku.setPreferredSize(new java.awt.Dimension(400, 300));
 
@@ -269,6 +309,11 @@ public class adminPage extends javax.swing.JFrame {
         tglTerbit.setText("Tgl Terbit :");
 
         darkModeToggle.setText("Dark Mode");
+        darkModeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkModeToggleActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelEditBukuLayout = new javax.swing.GroupLayout(panelEditBuku);
         panelEditBuku.setLayout(panelEditBukuLayout);
@@ -342,9 +387,9 @@ public class adminPage extends javax.swing.JFrame {
                 .addContainerGap(225, Short.MAX_VALUE))
         );
 
-        jPanel2.add(panelEditBuku, "cardBuku");
+        panelEdit.add(panelEditBuku, "cardBuku");
 
-        mainPanel.add(jPanel2, java.awt.BorderLayout.WEST);
+        mainPanel.add(panelEdit, java.awt.BorderLayout.WEST);
 
         tablePanel.setPreferredSize(new java.awt.Dimension(700, 768));
         tablePanel.setLayout(new java.awt.BorderLayout());
@@ -373,7 +418,7 @@ public class adminPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nama Buku", "Pengarang", "Stok", "Tanggal Terbit"
             }
         ));
         tableBuku.setShowGrid(true);
@@ -422,22 +467,8 @@ public class adminPage extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelBtn1ActionPerformed
 
-    private void darkModeToggleActionPerformed(java.awt.event.ActionEvent evt) {
-        setDarkMode(darkModeToggle.isSelected());
-        DarkMode.isDarkMode = darkModeToggle.isSelected();
-        
-        if (darkModeToggle.isSelected()) {
-            darkModeToggle.setText("Light Mode");
-            darkModeToggle1.setSelected(true);
-            darkModeToggle1.setText("Light Mode");
-        } else {
-            darkModeToggle.setText("Dark Mode");
-            darkModeToggle1.setSelected(false);
-            darkModeToggle1.setText("Dark Mode");
-        }
-    }
-
-    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void darkModeToggle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggle1ActionPerformed
+        // TODO add your handling code here:
         setDarkMode(darkModeToggle1.isSelected());
         DarkMode.isDarkMode = darkModeToggle1.isSelected();
         
@@ -450,7 +481,24 @@ public class adminPage extends javax.swing.JFrame {
             darkModeToggle.setSelected(false);
             darkModeToggle.setText("Dark Mode");
         }
-    }
+    }//GEN-LAST:event_darkModeToggle1ActionPerformed
+
+    private void darkModeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggleActionPerformed
+        // TODO add your handling code here:
+        setDarkMode(darkModeToggle.isSelected());
+        DarkMode.isDarkMode = darkModeToggle.isSelected();
+        
+        if (darkModeToggle.isSelected()) {
+            darkModeToggle.setText("Light Mode");
+            darkModeToggle1.setSelected(true);
+            darkModeToggle1.setText("Light Mode");
+        } else {
+            darkModeToggle.setText("Dark Mode");
+            darkModeToggle1.setSelected(false);
+            darkModeToggle1.setText("Dark Mode");
+        }
+    }//GEN-LAST:event_darkModeToggleActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -487,7 +535,6 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JButton editBtn;
     private javax.swing.JButton editBtn1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel judulMenuAnggota;
@@ -497,6 +544,7 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JTextField namaAnggotaInput;
     private javax.swing.JLabel namaBuku;
     private javax.swing.JTextField namaBukuInput;
+    private javax.swing.JPanel panelEdit;
     private javax.swing.JPanel panelEditAnggota;
     private javax.swing.JPanel panelEditBuku;
     private javax.swing.JLabel password;
