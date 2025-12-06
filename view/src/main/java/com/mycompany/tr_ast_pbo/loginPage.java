@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import javax.swing.JOptionPane;
 
+import com.mycompany.tr_ast_pbo.admin.adminPage;
+
 public class loginPage extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(loginPage.class.getName());
