@@ -10,6 +10,15 @@ import com.mycompany.tr_ast_pbo.DarkMode;
 import java.awt.CardLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import logic.FiturAdmin;
+import objek.Anggota;
+import objek.Buku;
+import java.util.List;
+import java.text.SimpleDateFormat;
+import DTO.PinjamDTO;
+import com.mycompany.tr_ast_pbo.loginPage;
 
 /**
  *
@@ -18,6 +27,9 @@ import javax.swing.event.ChangeListener;
 public class adminPage extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(adminPage.class.getName());
+    private FiturAdmin fiturAdmin = new FiturAdmin();
+    private String selectedAnggotaId = null;
+    private String selectedBukuId = null;
 
     /**
      * Creates new form adminPage
@@ -28,6 +40,7 @@ public class adminPage extends javax.swing.JFrame {
         setDarkMode(DarkMode.isDarkMode);
         jScrollPane1.getViewport().setOpaque(false);
         jScrollPane2.getViewport().setOpaque(false);
+        jScrollPane3.getViewport().setOpaque(false);
         
         CardLayout cl = (CardLayout) panelEdit.getLayout();
         
@@ -43,9 +56,16 @@ public class adminPage extends javax.swing.JFrame {
                 } else if (index == 1) {
                     // Jika Tab 1 (Buku) dipilih -> Tampilkan panel buku
                     cl.show(panelEdit, "cardBuku");
+                } else if (index == 2) {
+                    // Jika Tab 2 (Peminjam) dipilih -> Tidak perlu panel edit
+                    cl.show(panelEdit, "cardPeminjam");
                 }
             }
         });
+        
+        loadTables();
+        setupTableListeners();
+
     }
     
     private void setDarkMode(boolean isDark) {
@@ -55,6 +75,7 @@ public class adminPage extends javax.swing.JFrame {
             panelEdit.setBackground(new Color(44, 44, 44));
             panelEditAnggota.setBackground(new Color(44, 44, 44));
             panelEditBuku.setBackground(new Color(44, 44, 44));
+            panelPeminjam.setBackground(new Color(44, 44, 44));
             tablePanel.setBackground(new Color(44, 44, 44));
             tabPanel.setBackground(new Color(44, 44, 44));
             perpus.setForeground(Color.WHITE);
@@ -74,6 +95,10 @@ public class adminPage extends javax.swing.JFrame {
             tableBuku.setBackground(new Color(44, 44, 44));
             tableBuku.setForeground(Color.WHITE);
             tableBuku.setGridColor(Color.WHITE);
+            
+            tablePeminjam.setBackground(new Color(44, 44, 44));
+            tablePeminjam.setForeground(Color.WHITE);
+            tablePeminjam.setGridColor(Color.WHITE);
         
         }else{
             jPanel1.setBackground(new Color(249, 248, 246));
@@ -81,6 +106,7 @@ public class adminPage extends javax.swing.JFrame {
             panelEdit.setBackground(new Color(249, 248, 246));
             panelEditAnggota.setBackground(new Color(249, 248, 246));
             panelEditBuku.setBackground(new Color(249, 248, 246));
+            panelPeminjam.setBackground(new Color(249, 248, 246));
             tablePanel.setBackground(new Color(249, 248, 246));
             tabPanel.setBackground(new Color(249, 248, 246));
             perpus.setForeground(Color.BLACK);
@@ -100,6 +126,10 @@ public class adminPage extends javax.swing.JFrame {
             tableBuku.setBackground(new Color(249, 248, 246));
             tableBuku.setForeground(Color.BLACK);
             tableBuku.setGridColor(Color.BLACK);
+            
+            tablePeminjam.setBackground(new Color(249, 248, 246));
+            tablePeminjam.setForeground(Color.BLACK);
+            tablePeminjam.setGridColor(Color.BLACK);
         }
     }
 
@@ -127,6 +157,7 @@ public class adminPage extends javax.swing.JFrame {
         deleteBtn1 = new javax.swing.JButton();
         cancelBtn1 = new javax.swing.JButton();
         darkModeToggle1 = new javax.swing.JToggleButton();
+        logOut = new javax.swing.JButton();
         panelEditBuku = new javax.swing.JPanel();
         judulMenuBuku = new javax.swing.JLabel();
         namaBuku = new javax.swing.JLabel();
@@ -142,12 +173,18 @@ public class adminPage extends javax.swing.JFrame {
         tglTerbit = new javax.swing.JLabel();
         tglTerbitInput = new javax.swing.JTextField();
         darkModeToggle = new javax.swing.JToggleButton();
+        logOut1 = new javax.swing.JButton();
+        panelPeminjam = new javax.swing.JPanel();
+        darkModeToggle2 = new javax.swing.JToggleButton();
+        logOut2 = new javax.swing.JButton();
         tablePanel = new javax.swing.JPanel();
         tabPanel = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableAnggota = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableBuku = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tablePeminjam = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -210,6 +247,13 @@ public class adminPage extends javax.swing.JFrame {
             }
         });
 
+        logOut.setText("Log Out");
+        logOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logOutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelEditAnggotaLayout = new javax.swing.GroupLayout(panelEditAnggota);
         panelEditAnggota.setLayout(panelEditAnggotaLayout);
         panelEditAnggotaLayout.setHorizontalGroup(
@@ -231,7 +275,10 @@ public class adminPage extends javax.swing.JFrame {
                     .addGroup(panelEditAnggotaLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(darkModeToggle1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                                .addComponent(darkModeToggle1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(56, 56, 56)
+                                .addComponent(logOut, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelEditAnggotaLayout.createSequentialGroup()
                                 .addComponent(tambahBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -262,7 +309,9 @@ public class adminPage extends javax.swing.JFrame {
                     .addComponent(deleteBtn1)
                     .addComponent(cancelBtn1))
                 .addGap(49, 49, 49)
-                .addComponent(darkModeToggle1)
+                .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(darkModeToggle1)
+                    .addComponent(logOut))
                 .addContainerGap(295, Short.MAX_VALUE))
         );
 
@@ -315,6 +364,13 @@ public class adminPage extends javax.swing.JFrame {
             }
         });
 
+        logOut1.setText("Log Out");
+        logOut1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logOut1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelEditBukuLayout = new javax.swing.GroupLayout(panelEditBuku);
         panelEditBuku.setLayout(panelEditBukuLayout);
         panelEditBukuLayout.setHorizontalGroup(
@@ -344,7 +400,10 @@ public class adminPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEditBukuLayout.createSequentialGroup()
                 .addGap(0, 24, Short.MAX_VALUE)
                 .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(darkModeToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelEditBukuLayout.createSequentialGroup()
+                        .addComponent(darkModeToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(58, 58, 58)
+                        .addComponent(logOut1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelEditBukuLayout.createSequentialGroup()
                         .addComponent(tambahBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -383,11 +442,52 @@ public class adminPage extends javax.swing.JFrame {
                     .addComponent(deleteBtn)
                     .addComponent(cancelBtn))
                 .addGap(49, 49, 49)
-                .addComponent(darkModeToggle)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(darkModeToggle)
+                    .addComponent(logOut1))
                 .addContainerGap(225, Short.MAX_VALUE))
         );
 
         panelEdit.add(panelEditBuku, "cardBuku");
+
+        panelPeminjam.setPreferredSize(new java.awt.Dimension(300, 539));
+
+        darkModeToggle2.setText("Dark Mode");
+        darkModeToggle2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkModeToggle2ActionPerformed(evt);
+            }
+        });
+
+        logOut2.setText("Log Out");
+        logOut2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logOut2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelPeminjamLayout = new javax.swing.GroupLayout(panelPeminjam);
+        panelPeminjam.setLayout(panelPeminjamLayout);
+        panelPeminjamLayout.setHorizontalGroup(
+            panelPeminjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelPeminjamLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(darkModeToggle2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(79, 79, 79)
+                .addComponent(logOut2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(75, Short.MAX_VALUE))
+        );
+        panelPeminjamLayout.setVerticalGroup(
+            panelPeminjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelPeminjamLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(panelPeminjamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(darkModeToggle2)
+                    .addComponent(logOut2))
+                .addContainerGap(494, Short.MAX_VALUE))
+        );
+
+        panelEdit.add(panelPeminjam, "cardPeminjam");
 
         mainPanel.add(panelEdit, java.awt.BorderLayout.WEST);
 
@@ -426,6 +526,22 @@ public class adminPage extends javax.swing.JFrame {
 
         tabPanel.addTab("Buku", jScrollPane2);
 
+        tablePeminjam.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tablePeminjam.setShowGrid(true);
+        jScrollPane3.setViewportView(tablePeminjam);
+
+        tabPanel.addTab("Peminjam", jScrollPane3);
+
         tablePanel.add(tabPanel, java.awt.BorderLayout.CENTER);
 
         mainPanel.add(tablePanel, java.awt.BorderLayout.CENTER);
@@ -437,34 +553,167 @@ public class adminPage extends javax.swing.JFrame {
 
     private void tambahBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBtnActionPerformed
         // TODO add your handling code here:
+        String nama = namaBukuInput.getText().trim();
+        String penulisText = penulisInput.getText().trim();
+        String stokText = stokInput.getText().trim();
+        String tglTerbitText = tglTerbitInput.getText().trim();
+        
+        if(nama.isEmpty() || stokText.isEmpty() || tglTerbitText.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nama buku, stok, dan tanggal terbit harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        try {
+            int stok = Integer.parseInt(stokText);
+            int result = fiturAdmin.createBuku(penulisText, nama, stok, tglTerbitText);
+            
+            if(result == 200){
+                JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                clearBukuFields();
+                loadTableBuku();
+                tableBuku.clearSelection();
+            } else if(result == 400){
+                JOptionPane.showMessageDialog(this, "Input tidak valid! Pastikan stok >= 0 dan format tanggal yyyy-MM-dd", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menambahkan buku!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Stok harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_tambahBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        // TODO add your handling code here:
+        if(selectedBukuId == null){
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin diedit!", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String nama = namaBukuInput.getText().trim();
+        String penulisText = penulisInput.getText().trim();
+        String stokText = stokInput.getText().trim();
+        String tglTerbitText = tglTerbitInput.getText().trim();
+        
+        if(nama.isEmpty() || stokText.isEmpty() || tglTerbitText.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nama buku, stok, dan tanggal terbit harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        try {
+            int stok = Integer.parseInt(stokText);
+            int result = fiturAdmin.updateBuku(selectedBukuId, penulisText, nama, stok, tglTerbitText);
+            
+            if(result == 200){
+                JOptionPane.showMessageDialog(this, "Buku berhasil diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                clearBukuFields();
+                loadTableBuku();
+                selectedBukuId = null;
+                tableBuku.clearSelection();
+            } else if(result == 400){
+                JOptionPane.showMessageDialog(this, "Input tidak valid! Pastikan stok >= 0 dan format tanggal yyyy-MM-dd", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal mengupdate buku!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Stok harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
-        // TODO add your handling code here:
+        if(selectedBukuId == null){
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus!", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, "Apakah anda yakin ingin menghapus buku ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if(confirm == JOptionPane.YES_OPTION){
+            int result = fiturAdmin.deleteBuku(selectedBukuId);
+            
+            if(result == 200){
+                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                clearBukuFields();
+                loadTableBuku();
+                selectedBukuId = null;
+                tableBuku.clearSelection();
+            } else if(result == 400){
+                JOptionPane.showMessageDialog(this, "ID buku tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus buku! Mungkin buku sedang dipinjam.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
-        // TODO add your handling code here:
+        clearBukuFields();
+        selectedBukuId = null;
+        tableBuku.clearSelection();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void tambahBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBtn1ActionPerformed
-        // TODO add your handling code here:
+        String nama = namaAnggotaInput.getText().trim();
+        String password = passwordInput.getText().trim();
+        
+        if(nama.isEmpty() || password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nama dan password harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if(fiturAdmin.createAnggota(nama, password)){
+            JOptionPane.showMessageDialog(this, "Anggota berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            clearAnggotaFields();
+            loadTableAnggota();
+            tableAnggota.clearSelection();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal menambahkan anggota!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_tambahBtn1ActionPerformed
 
     private void editBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn1ActionPerformed
-        // TODO add your handling code here:
+        if(selectedAnggotaId == null){
+            JOptionPane.showMessageDialog(this, "Pilih anggota yang ingin diedit!", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String password = passwordInput.getText().trim();
+        
+        if(password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Password harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if(fiturAdmin.updatePassword(selectedAnggotaId, password)){
+            JOptionPane.showMessageDialog(this, "Password berhasil diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            clearAnggotaFields();
+            selectedAnggotaId = null;
+            tableAnggota.clearSelection();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal mengupdate password!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_editBtn1ActionPerformed
 
     private void deleteBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtn1ActionPerformed
-        // TODO add your handling code here:
+        if(selectedAnggotaId == null){
+            JOptionPane.showMessageDialog(this, "Pilih anggota yang ingin dihapus!", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, "Apakah anda yakin ingin menghapus anggota ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        if(confirm == JOptionPane.YES_OPTION){
+            if(fiturAdmin.deleteAnggota(selectedAnggotaId)){
+                JOptionPane.showMessageDialog(this, "Anggota berhasil dihapus!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                clearAnggotaFields();
+                loadTableAnggota();
+                selectedAnggotaId = null;
+                tableAnggota.clearSelection();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus anggota!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_deleteBtn1ActionPerformed
 
     private void cancelBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtn1ActionPerformed
-        // TODO add your handling code here:
+        clearAnggotaFields();
+        selectedAnggotaId = null;
+        tableAnggota.clearSelection();
     }//GEN-LAST:event_cancelBtn1ActionPerformed
 
     private void darkModeToggle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggle1ActionPerformed
@@ -475,11 +724,16 @@ public class adminPage extends javax.swing.JFrame {
         if (darkModeToggle1.isSelected()) {
             darkModeToggle1.setText("Light Mode");
             darkModeToggle.setSelected(true);
+            darkModeToggle2.setSelected(true);
             darkModeToggle.setText("Light Mode");
+            darkModeToggle2.setText("Light Mode");
         } else {
             darkModeToggle1.setText("Dark Mode");
+            darkModeToggle2.setText("Dark Mode");
             darkModeToggle.setSelected(false);
+            darkModeToggle2.setSelected(false);
             darkModeToggle.setText("Dark Mode");
+            darkModeToggle2.setText("Dark Mode");
         }
     }//GEN-LAST:event_darkModeToggle1ActionPerformed
 
@@ -491,14 +745,167 @@ public class adminPage extends javax.swing.JFrame {
         if (darkModeToggle.isSelected()) {
             darkModeToggle.setText("Light Mode");
             darkModeToggle1.setSelected(true);
+            darkModeToggle2.setSelected(true);
             darkModeToggle1.setText("Light Mode");
+            darkModeToggle2.setText("Light Mode");
         } else {
             darkModeToggle.setText("Dark Mode");
             darkModeToggle1.setSelected(false);
+            darkModeToggle2.setSelected(false);
             darkModeToggle1.setText("Dark Mode");
+            darkModeToggle2.setText("Dark Mode");
         }
     }//GEN-LAST:event_darkModeToggleActionPerformed
 
+    private void darkModeToggle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggle2ActionPerformed
+        // TODO add your handling code here:
+        setDarkMode(darkModeToggle2.isSelected());
+        DarkMode.isDarkMode = darkModeToggle2.isSelected();
+        
+        if (darkModeToggle2.isSelected()) {
+            darkModeToggle.setText("Light Mode");
+            darkModeToggle1.setSelected(true);
+            darkModeToggle.setSelected(true);
+            darkModeToggle1.setText("Light Mode");
+            darkModeToggle2.setText("Light Mode");
+        } else {
+            darkModeToggle.setText("Dark Mode");
+            darkModeToggle1.setSelected(false);
+            darkModeToggle.setSelected(false);
+            darkModeToggle1.setText("Dark Mode");
+            darkModeToggle2.setText("Dark Mode");
+        }
+    }//GEN-LAST:event_darkModeToggle2ActionPerformed
+
+    private void logOut2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOut2ActionPerformed
+        this.dispose();
+        new loginPage().setVisible(true);
+    }//GEN-LAST:event_logOut2ActionPerformed
+
+    private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new loginPage().setVisible(true);
+    }//GEN-LAST:event_logOutActionPerformed
+
+    private void logOut1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOut1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new loginPage().setVisible(true);
+    }//GEN-LAST:event_logOut1ActionPerformed
+
+    private void loadTables() {
+        loadTableAnggota();
+        loadTableBuku();
+        loadTablePeminjam();
+    }
+    
+    private void loadTableAnggota() {
+        DefaultTableModel model = new DefaultTableModel(new String[]{"ID Anggota", "Nama", "Status"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        List<Anggota> listAnggota = fiturAdmin.getAllAnggota();
+        for(Anggota anggota : listAnggota) {
+            model.addRow(new Object[]{
+                anggota.getId_anggota(),
+                anggota.getNama(),
+                anggota.isStatus() ? "Aktif" : "Tidak Aktif"
+            });
+        }
+        
+        tableAnggota.setModel(model);
+    }
+    
+    private void loadTableBuku() {
+        DefaultTableModel model = new DefaultTableModel(new String[]{"ID Buku", "Nama Buku", "Penulis", "Stok", "Tanggal Terbit"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<Buku> listBuku = fiturAdmin.getAllBuku();
+        for(Buku buku : listBuku) {
+            model.addRow(new Object[]{
+                buku.getId_buku(),
+                buku.getNama_buku(),
+                buku.getPenulis(),
+                buku.getStok(),
+                dateFormat.format(buku.getTanggal_terbit())
+            });
+        }
+        
+        tableBuku.setModel(model);
+    }
+    
+    private void loadTablePeminjam() {
+        DefaultTableModel model = new DefaultTableModel(
+            new String[]{"ID Anggota", "Nama Anggota", "Nama Buku", "Jumlah", "Tanggal Pinjam", "Deadline", "Tanggal Kembali", "Status"}, 
+            0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        List<PinjamDTO> listPinjam = fiturAdmin.getAllPinjam();
+        if(listPinjam != null && !listPinjam.isEmpty()) {
+            for(PinjamDTO pinjam : listPinjam) {
+                model.addRow(new Object[]{
+                    pinjam.getId_anggota(),
+                    pinjam.getNama_anggota(),
+                    pinjam.getNama_buku(),
+                    pinjam.getJumlah_buku(),
+                    pinjam.getTanggal_pinjam(),
+                    pinjam.getDeadline(),
+                    pinjam.getTanggal_kembali() != null ? pinjam.getTanggal_kembali() : "-",
+                    pinjam.getStatus()
+                });
+            }
+        }
+        
+        tablePeminjam.setModel(model);
+    }
+    
+    private void setupTableListeners() {
+        tableAnggota.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tableAnggota.getSelectedRow() != -1) {
+                int row = tableAnggota.getSelectedRow();
+                selectedAnggotaId = tableAnggota.getValueAt(row, 0).toString();
+                namaAnggotaInput.setText(tableAnggota.getValueAt(row, 1).toString());
+                passwordInput.setText("");
+            }
+        });
+        
+        tableBuku.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tableBuku.getSelectedRow() != -1) {
+                int row = tableBuku.getSelectedRow();
+                selectedBukuId = tableBuku.getValueAt(row, 0).toString();
+                namaBukuInput.setText(tableBuku.getValueAt(row, 1).toString());
+                penulisInput.setText(tableBuku.getValueAt(row, 2).toString());
+                stokInput.setText(tableBuku.getValueAt(row, 3).toString());
+                tglTerbitInput.setText(tableBuku.getValueAt(row, 4).toString());
+            }
+        });
+    }
+    
+    private void clearAnggotaFields() {
+        namaAnggotaInput.setText("");
+        passwordInput.setText("");
+    }
+    
+    private void clearBukuFields() {
+        namaBukuInput.setText("");
+        penulisInput.setText("");
+        stokInput.setText("");
+        tglTerbitInput.setText("");
+    }
 
     /**
      * @param args the command line arguments
@@ -530,6 +937,7 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JButton cancelBtn1;
     private javax.swing.JToggleButton darkModeToggle;
     private javax.swing.JToggleButton darkModeToggle1;
+    private javax.swing.JToggleButton darkModeToggle2;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JButton deleteBtn1;
     private javax.swing.JButton editBtn;
@@ -537,8 +945,12 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel judulMenuAnggota;
     private javax.swing.JLabel judulMenuBuku;
+    private javax.swing.JButton logOut;
+    private javax.swing.JButton logOut1;
+    private javax.swing.JButton logOut2;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JLabel namaAnggota;
     private javax.swing.JTextField namaAnggotaInput;
@@ -547,6 +959,7 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JPanel panelEdit;
     private javax.swing.JPanel panelEditAnggota;
     private javax.swing.JPanel panelEditBuku;
+    private javax.swing.JPanel panelPeminjam;
     private javax.swing.JLabel password;
     private javax.swing.JTextField passwordInput;
     private javax.swing.JLabel penulis;
@@ -558,6 +971,7 @@ public class adminPage extends javax.swing.JFrame {
     private javax.swing.JTable tableAnggota;
     private javax.swing.JTable tableBuku;
     private javax.swing.JPanel tablePanel;
+    private javax.swing.JTable tablePeminjam;
     private javax.swing.JButton tambahBtn;
     private javax.swing.JButton tambahBtn1;
     private javax.swing.JLabel tglTerbit;

@@ -6,6 +6,8 @@ import javax.swing.JOptionPane;
 
 import com.mycompany.tr_ast_pbo.admin.adminPage;
 
+import logic.LoginLogic;
+
 public class loginPage extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(loginPage.class.getName());
@@ -30,6 +32,7 @@ public class loginPage extends javax.swing.JFrame {
             labelPassword.setForeground(Color.WHITE);
             titik2Username.setForeground(Color.WHITE);
             titik2Password.setForeground(Color.WHITE);
+            darkModeToggle.setText("Light Mode");
         }else{
             jPanel1.setBackground(new Color(249, 248, 246));
             headerPanel.setBackground(new Color(249, 248, 246));
@@ -38,6 +41,7 @@ public class loginPage extends javax.swing.JFrame {
             labelPassword.setForeground(Color.BLACK);
             titik2Username.setForeground(Color.BLACK);
             titik2Password.setForeground(Color.BLACK);
+            darkModeToggle.setText("Dark Mode");
         }
         
         
@@ -206,30 +210,32 @@ public class loginPage extends javax.swing.JFrame {
     }//GEN-LAST:event_lupaPasswordBtnActionPerformed
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        LoginLogic loginLogic = new LoginLogic();
         String username = inputUsername.getText();
         String password = new String(inputPassword.getPassword());
-        
-        // Validasi input tidak boleh kosong
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "Username dan Password tidak boleh kosong", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+
+        if(username.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Tolong Isi Username!", "Login", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if(password.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Tolong Isi Password!", "Login", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        // Validasi login (username: admin, password: admin)
-        if (username.equals("admin") && password.equals("admin")) {
-            // Login berhasil
+        String role = loginLogic.getRole(username, password);
+        
+        if(role == null){
+            JOptionPane.showMessageDialog(rootPane, "Username atau Password salah!", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+            inputUsername.setText("");
+            inputPassword.setText("");
+            return;
+        }
+        
+        if(role.equalsIgnoreCase("admin")){
             new adminPage().setVisible(true);
             this.dispose();
-        }
-        //klo username nya salah, muncul pesan error username salah
-        else if (!username.equals("admin")) {
-            JOptionPane.showMessageDialog(rootPane, "Username salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
-            inputPassword.setText("");
-        }
-        //klo password nya salah, muncul pesan error password salah
-        else {
-            JOptionPane.showMessageDialog(rootPane, "Password salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
-            inputPassword.setText("");
+        } else if(role.equalsIgnoreCase("anggota")){
         }
     }//GEN-LAST:event_loginBtnActionPerformed
 
