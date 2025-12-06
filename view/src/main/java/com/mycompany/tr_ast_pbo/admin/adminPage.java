@@ -4,7 +4,12 @@
  */
 package com.mycompany.tr_ast_pbo.admin;
 
+import java.awt.Color;
 import javax.swing.JFrame;
+import com.mycompany.tr_ast_pbo.DarkMode;
+import java.awt.CardLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -19,7 +24,83 @@ public class adminPage extends javax.swing.JFrame {
      */
     public adminPage() {
         initComponents();
-        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setDarkMode(DarkMode.isDarkMode);
+        jScrollPane1.getViewport().setOpaque(false);
+        jScrollPane2.getViewport().setOpaque(false);
+        
+        CardLayout cl = (CardLayout) panelEdit.getLayout();
+        
+        tabPanel.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                // Cek index tab yang dipilih
+                int index = tabPanel.getSelectedIndex();
+                
+                if (index == 0) {
+                    // Jika Tab 0 (Anggota) dipilih -> Tampilkan panel anggota
+                    cl.show(panelEdit, "cardAnggota"); 
+                } else if (index == 1) {
+                    // Jika Tab 1 (Buku) dipilih -> Tampilkan panel buku
+                    cl.show(panelEdit, "cardBuku");
+                }
+            }
+        });
+    }
+    
+    private void setDarkMode(boolean isDark) {
+        if(isDark){
+            jPanel1.setBackground(new Color(44, 44, 44));
+            mainPanel.setBackground(new Color(44, 44, 44));
+            panelEdit.setBackground(new Color(44, 44, 44));
+            panelEditAnggota.setBackground(new Color(44, 44, 44));
+            panelEditBuku.setBackground(new Color(44, 44, 44));
+            tablePanel.setBackground(new Color(44, 44, 44));
+            tabPanel.setBackground(new Color(44, 44, 44));
+            perpus.setForeground(Color.WHITE);
+            judulMenuAnggota.setForeground(Color.WHITE);
+            judulMenuBuku.setForeground(Color.WHITE);
+            namaAnggota.setForeground(Color.WHITE);
+            password.setForeground(Color.WHITE);
+            namaBuku.setForeground(Color.WHITE);
+            penulis.setForeground(Color.WHITE);
+            stok.setForeground(Color.WHITE);
+            tglTerbit.setForeground(Color.WHITE);
+            
+            tableAnggota.setBackground(new Color(44, 44, 44));
+            tableAnggota.setForeground(Color.WHITE);
+            tableAnggota.setGridColor(Color.WHITE);
+            
+            tableBuku.setBackground(new Color(44, 44, 44));
+            tableBuku.setForeground(Color.WHITE);
+            tableBuku.setGridColor(Color.WHITE);
+        
+        }else{
+            jPanel1.setBackground(new Color(249, 248, 246));
+            mainPanel.setBackground(new Color(249, 248, 246));
+            panelEdit.setBackground(new Color(249, 248, 246));
+            panelEditAnggota.setBackground(new Color(249, 248, 246));
+            panelEditBuku.setBackground(new Color(249, 248, 246));
+            tablePanel.setBackground(new Color(249, 248, 246));
+            tabPanel.setBackground(new Color(249, 248, 246));
+            perpus.setForeground(Color.BLACK);
+            judulMenuAnggota.setForeground(Color.BLACK);
+            judulMenuBuku.setForeground(Color.BLACK);
+            namaAnggota.setForeground(Color.BLACK);
+            password.setForeground(Color.BLACK);
+            namaBuku.setForeground(Color.BLACK);
+            penulis.setForeground(Color.BLACK);
+            stok.setForeground(Color.BLACK);
+            tglTerbit.setForeground(Color.BLACK);
+            
+            tableAnggota.setBackground(new Color(249, 248, 246));
+            tableAnggota.setForeground(Color.BLACK);
+            tableAnggota.setGridColor(Color.BLACK);
+            
+            tableBuku.setBackground(new Color(249, 248, 246));
+            tableBuku.setForeground(Color.BLACK);
+            tableBuku.setGridColor(Color.BLACK);
+        }
     }
 
     /**
@@ -32,10 +113,22 @@ public class adminPage extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        perpus = new javax.swing.JLabel();
         mainPanel = new javax.swing.JPanel();
         panelEdit = new javax.swing.JPanel();
-        judulMenu = new javax.swing.JLabel();
+        panelEditAnggota = new javax.swing.JPanel();
+        judulMenuAnggota = new javax.swing.JLabel();
+        namaAnggota = new javax.swing.JLabel();
+        namaAnggotaInput = new javax.swing.JTextField();
+        password = new javax.swing.JLabel();
+        passwordInput = new javax.swing.JTextField();
+        tambahBtn1 = new javax.swing.JButton();
+        editBtn1 = new javax.swing.JButton();
+        deleteBtn1 = new javax.swing.JButton();
+        cancelBtn1 = new javax.swing.JButton();
+        darkModeToggle1 = new javax.swing.JToggleButton();
+        panelEditBuku = new javax.swing.JPanel();
+        judulMenuBuku = new javax.swing.JLabel();
         namaBuku = new javax.swing.JLabel();
         namaBukuInput = new javax.swing.JTextField();
         penulis = new javax.swing.JLabel();
@@ -46,14 +139,15 @@ public class adminPage extends javax.swing.JFrame {
         editBtn = new javax.swing.JButton();
         deleteBtn = new javax.swing.JButton();
         cancelBtn = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        tglTerbit = new javax.swing.JLabel();
+        tglTerbitInput = new javax.swing.JTextField();
+        darkModeToggle = new javax.swing.JToggleButton();
         tablePanel = new javax.swing.JPanel();
         tabPanel = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableAnggota = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tableBuku = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,18 +155,122 @@ public class adminPage extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(1617, 100));
         jPanel1.setLayout(new java.awt.GridLayout(1, 0));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("PERPUSTAKAAN");
-        jPanel1.add(jLabel1);
+        perpus.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        perpus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        perpus.setText("PERPUSTAKAAN");
+        jPanel1.add(perpus);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        panelEdit.setPreferredSize(new java.awt.Dimension(400, 300));
+        panelEdit.setPreferredSize(new java.awt.Dimension(400, 539));
+        panelEdit.setLayout(new java.awt.CardLayout());
 
-        judulMenu.setText("MENU EDIT");
+        panelEditAnggota.setPreferredSize(new java.awt.Dimension(400, 300));
+
+        judulMenuAnggota.setText("MENU EDIT ANGGOTA");
+
+        namaAnggota.setText("Nama Anggota :");
+
+        password.setText("Password :");
+
+        tambahBtn1.setText("Tambah");
+        tambahBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tambahBtn1ActionPerformed(evt);
+            }
+        });
+
+        editBtn1.setText("Edit");
+        editBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBtn1ActionPerformed(evt);
+            }
+        });
+
+        deleteBtn1.setText("Delete");
+        deleteBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBtn1ActionPerformed(evt);
+            }
+        });
+
+        cancelBtn1.setText("Cancel");
+        cancelBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtn1ActionPerformed(evt);
+            }
+        });
+
+        darkModeToggle1.setText("Dark Mode");
+        darkModeToggle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkModeToggle1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelEditAnggotaLayout = new javax.swing.GroupLayout(panelEditAnggota);
+        panelEditAnggota.setLayout(panelEditAnggotaLayout);
+        panelEditAnggotaLayout.setHorizontalGroup(
+            panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                        .addGap(167, 167, 167)
+                        .addComponent(judulMenuAnggota))
+                    .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(password, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(namaAnggota, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(namaAnggotaInput, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                            .addComponent(passwordInput)))
+                    .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(darkModeToggle1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                                .addComponent(tambahBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(editBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(deleteBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cancelBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
+        panelEditAnggotaLayout.setVerticalGroup(
+            panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEditAnggotaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(judulMenuAnggota)
+                .addGap(18, 18, 18)
+                .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(namaAnggota)
+                    .addComponent(namaAnggotaInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(password)
+                    .addComponent(passwordInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(47, 47, 47)
+                .addGroup(panelEditAnggotaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tambahBtn1)
+                    .addComponent(editBtn1)
+                    .addComponent(deleteBtn1)
+                    .addComponent(cancelBtn1))
+                .addGap(49, 49, 49)
+                .addComponent(darkModeToggle1)
+                .addContainerGap(295, Short.MAX_VALUE))
+        );
+
+        panelEdit.add(panelEditAnggota, "cardAnggota");
+
+        panelEditBuku.setPreferredSize(new java.awt.Dimension(400, 300));
+
+        judulMenuBuku.setText("MENU EDIT BUKU");
 
         namaBuku.setText("Nama Buku: ");
 
@@ -108,76 +306,88 @@ public class adminPage extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Tgl Terbit :");
+        tglTerbit.setText("Tgl Terbit :");
 
-        jTextField1.setText("jTextField1");
+        darkModeToggle.setText("Dark Mode");
+        darkModeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                darkModeToggleActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout panelEditLayout = new javax.swing.GroupLayout(panelEdit);
-        panelEdit.setLayout(panelEditLayout);
-        panelEditLayout.setHorizontalGroup(
-            panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEditLayout.createSequentialGroup()
-                .addGap(0, 24, Short.MAX_VALUE)
-                .addComponent(tambahBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-            .addGroup(panelEditLayout.createSequentialGroup()
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(panelEditLayout.createSequentialGroup()
+        javax.swing.GroupLayout panelEditBukuLayout = new javax.swing.GroupLayout(panelEditBuku);
+        panelEditBuku.setLayout(panelEditBukuLayout);
+        panelEditBukuLayout.setHorizontalGroup(
+            panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEditBukuLayout.createSequentialGroup()
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(panelEditBukuLayout.createSequentialGroup()
                         .addGap(167, 167, 167)
-                        .addComponent(judulMenu))
-                    .addGroup(panelEditLayout.createSequentialGroup()
+                        .addComponent(judulMenuBuku))
+                    .addGroup(panelEditBukuLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(stok, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(penulis, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(namaBuku, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(namaBukuInput)
                             .addComponent(penulisInput)
                             .addComponent(stokInput, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)))
-                    .addGroup(panelEditLayout.createSequentialGroup()
+                    .addGroup(panelEditBukuLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel2)
+                        .addComponent(tglTerbit)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)))
+                        .addComponent(tglTerbitInput, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEditBukuLayout.createSequentialGroup()
+                .addGap(0, 24, Short.MAX_VALUE)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(darkModeToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelEditBukuLayout.createSequentialGroup()
+                        .addComponent(tambahBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(editBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(22, 22, 22))
         );
-        panelEditLayout.setVerticalGroup(
-            panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelEditLayout.createSequentialGroup()
+        panelEditBukuLayout.setVerticalGroup(
+            panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEditBukuLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(judulMenu)
+                .addComponent(judulMenuBuku)
                 .addGap(18, 18, 18)
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(namaBuku)
                     .addComponent(namaBukuInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(penulis)
                     .addComponent(penulisInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(stok)
                     .addComponent(stokInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tglTerbit)
+                    .addComponent(tglTerbitInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
-                .addGroup(panelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelEditBukuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tambahBtn)
                     .addComponent(editBtn)
                     .addComponent(deleteBtn)
                     .addComponent(cancelBtn))
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addGap(49, 49, 49)
+                .addComponent(darkModeToggle)
+                .addContainerGap(225, Short.MAX_VALUE))
         );
+
+        panelEdit.add(panelEditBuku, "cardBuku");
 
         mainPanel.add(panelEdit, java.awt.BorderLayout.WEST);
 
@@ -195,11 +405,12 @@ public class adminPage extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tableAnggota.setShowGrid(true);
         jScrollPane1.setViewportView(tableAnggota);
 
         tabPanel.addTab("Anggota", jScrollPane1);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tableBuku.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -207,10 +418,11 @@ public class adminPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nama Buku", "Pengarang", "Stok", "Tanggal Terbit"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        tableBuku.setShowGrid(true);
+        jScrollPane2.setViewportView(tableBuku);
 
         tabPanel.addTab("Buku", jScrollPane2);
 
@@ -239,6 +451,55 @@ public class adminPage extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelBtnActionPerformed
 
+    private void tambahBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tambahBtn1ActionPerformed
+
+    private void editBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editBtn1ActionPerformed
+
+    private void deleteBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteBtn1ActionPerformed
+
+    private void cancelBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelBtn1ActionPerformed
+
+    private void darkModeToggle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggle1ActionPerformed
+        // TODO add your handling code here:
+        setDarkMode(darkModeToggle1.isSelected());
+        DarkMode.isDarkMode = darkModeToggle1.isSelected();
+        
+        if (darkModeToggle1.isSelected()) {
+            darkModeToggle1.setText("Light Mode");
+            darkModeToggle.setSelected(true);
+            darkModeToggle.setText("Light Mode");
+        } else {
+            darkModeToggle1.setText("Dark Mode");
+            darkModeToggle.setSelected(false);
+            darkModeToggle.setText("Dark Mode");
+        }
+    }//GEN-LAST:event_darkModeToggle1ActionPerformed
+
+    private void darkModeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_darkModeToggleActionPerformed
+        // TODO add your handling code here:
+        setDarkMode(darkModeToggle.isSelected());
+        DarkMode.isDarkMode = darkModeToggle.isSelected();
+        
+        if (darkModeToggle.isSelected()) {
+            darkModeToggle.setText("Light Mode");
+            darkModeToggle1.setSelected(true);
+            darkModeToggle1.setText("Light Mode");
+        } else {
+            darkModeToggle.setText("Dark Mode");
+            darkModeToggle1.setSelected(false);
+            darkModeToggle1.setText("Dark Mode");
+        }
+    }//GEN-LAST:event_darkModeToggleActionPerformed
+
+
     /**
      * @param args the command line arguments
      */
@@ -266,27 +527,40 @@ public class adminPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelBtn;
+    private javax.swing.JButton cancelBtn1;
+    private javax.swing.JToggleButton darkModeToggle;
+    private javax.swing.JToggleButton darkModeToggle1;
     private javax.swing.JButton deleteBtn;
+    private javax.swing.JButton deleteBtn1;
     private javax.swing.JButton editBtn;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton editBtn1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel judulMenu;
+    private javax.swing.JLabel judulMenuAnggota;
+    private javax.swing.JLabel judulMenuBuku;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JLabel namaAnggota;
+    private javax.swing.JTextField namaAnggotaInput;
     private javax.swing.JLabel namaBuku;
     private javax.swing.JTextField namaBukuInput;
     private javax.swing.JPanel panelEdit;
+    private javax.swing.JPanel panelEditAnggota;
+    private javax.swing.JPanel panelEditBuku;
+    private javax.swing.JLabel password;
+    private javax.swing.JTextField passwordInput;
     private javax.swing.JLabel penulis;
     private javax.swing.JTextField penulisInput;
+    private javax.swing.JLabel perpus;
     private javax.swing.JLabel stok;
     private javax.swing.JTextField stokInput;
     private javax.swing.JTabbedPane tabPanel;
     private javax.swing.JTable tableAnggota;
+    private javax.swing.JTable tableBuku;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JButton tambahBtn;
+    private javax.swing.JButton tambahBtn1;
+    private javax.swing.JLabel tglTerbit;
+    private javax.swing.JTextField tglTerbitInput;
     // End of variables declaration//GEN-END:variables
 }
