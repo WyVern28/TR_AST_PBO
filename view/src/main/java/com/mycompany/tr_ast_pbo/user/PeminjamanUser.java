@@ -6,7 +6,18 @@ package com.mycompany.tr_ast_pbo.user;
 
 import com.mycompany.tr_ast_pbo.loginPage;
 import com.mycompany.tr_ast_pbo.DarkMode;
-import java.awt.Color;
+import DTO.PinjamDTO;
+import objek.Buku;
+import repo.BukuRepository;
+import repo.PinjamRepository;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import java.awt.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 /**
  *
@@ -15,15 +26,93 @@ import java.awt.Color;
 public class PeminjamanUser extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PeminjamanUser.class.getName());
+    private String currentUser;
+    private PinjamRepository pinjamRepo = new PinjamRepository();
+    private BukuRepository bukuRepo = new BukuRepository();
 
-    /**
-     * Creates new form PeminjamanUser
-     */
-    public PeminjamanUser() {
+    public PeminjamanUser(String userId) {
+        this.currentUser = userId;
         initComponents();
+
+        jPanel3.setLayout(new BoxLayout(jPanel3, BoxLayout.Y_AXIS));
+
+        loadPeminjamanSaya();
         setDarkMode(DarkMode.isDarkMode);
     }
 
+    public PeminjamanUser() {
+        this("GUEST");
+    }
+
+    private void loadPeminjamanSaya() {
+        jPanel3.removeAll();
+        List<PinjamDTO> listPinjam = pinjamRepo.getPinjamByAnggota(currentUser);
+
+        for(PinjamDTO data : listPinjam) {
+            JPanel item = createLoanItem(data);
+            jPanel3.add(item);
+            jPanel3.add(Box.createVerticalStrut(15));
+        }
+
+        jPanel3.revalidate();
+        jPanel3.repaint();
+    }
+
+    private JPanel createLoanItem(PinjamDTO data) {
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        panel.setMaximumSize(new Dimension(800, 100));
+        panel.setLayout(new BorderLayout());
+
+        JPanel leftPanel = new JPanel();
+        leftPanel.setOpaque(false);
+        leftPanel.setLayout(new GridLayout(4, 1));
+
+        leftPanel.add(new JLabel("Judul: " + data.getNama_buku())); // Dari DTO JOIN
+        leftPanel.add(new JLabel("ID Buku: " + data.getId_buku()));
+        leftPanel.add(new JLabel("Tgl Pinjam: " + data.getTanggal_pinjam()));
+        JLabel lblDeadline = new JLabel("Deadline: " + data.getDeadline());
+        lblDeadline.setForeground(Color.RED);
+        leftPanel.add(lblDeadline);
+
+        JPanel rightPanel = new JPanel();
+        rightPanel.setOpaque(false);
+        rightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        JButton btnPerpanjang = new JButton("Perpanjang");
+        btnPerpanjang.setBackground(Color.LIGHT_GRAY);
+
+        JButton btnKembali = new JButton("Kembalikan");
+        btnKembali.setBackground(new Color(102, 255, 0));
+
+        btnKembali.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Kembalikan buku " + data.getNama_buku() + "?");
+            if(confirm == JOptionPane.YES_OPTION) {
+                boolean success = pinjamRepo.returnBuku(data.getId_pinjam());
+
+                if(success) {
+                    Buku b = bukuRepo.getBukuById(data.getId_buku());
+                    if(b != null) {
+                        bukuRepo.changeStock(data.getId_buku(), b.getStok() + 1);
+                    }
+
+                    JOptionPane.showMessageDialog(this, "Buku dikembalikan!");
+                    jPanel3.remove(panel);
+                    jPanel3.revalidate();
+                    jPanel3.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal mengembalikan buku.");
+                }
+            }
+        });
+
+        rightPanel.add(btnPerpanjang);
+        rightPanel.add(btnKembali);
+        panel.add(leftPanel, BorderLayout.CENTER);
+        panel.add(rightPanel, BorderLayout.EAST);
+
+        return panel;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -399,10 +488,14 @@ public class PeminjamanUser extends javax.swing.JFrame {
 
     private void tambahBtn6HomeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBtn6HomeBtnActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new DashboardUser(currentUser).setVisible(true);
     }//GEN-LAST:event_tambahBtn6HomeBtnActionPerformed
 
     private void editBtn9KatalogBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn9KatalogBtnActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new KatalogUser(currentUser).setVisible(true);
     }//GEN-LAST:event_editBtn9KatalogBtnActionPerformed
 
     private void editBtn10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn10ActionPerformed
@@ -536,6 +629,18 @@ public class PeminjamanUser extends javax.swing.JFrame {
         
         // Repaint to apply changes
         this.repaint();
+    }
+
+    private void updateRecursiveColor(Container container, Color bg, Color text) {
+        for(Component c : container.getComponents()) {
+            if(c instanceof JLabel) {
+                ((JLabel)c).setForeground(text);
+            }
+            if(c instanceof JPanel) {
+                c.setBackground(bg);
+                updateRecursiveColor((Container)c, bg, text);
+            }
+        }
     }
 
     /**

@@ -6,7 +6,16 @@ package com.mycompany.tr_ast_pbo.user;
 
 import com.mycompany.tr_ast_pbo.loginPage;
 import com.mycompany.tr_ast_pbo.DarkMode;
-import java.awt.Color;
+import java.awt.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import objek.Buku;
+import repo.BukuRepository;
+import repo.PinjamRepository;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,13 +24,104 @@ import java.awt.Color;
 public class KatalogUser extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(KatalogUser.class.getName());
+    private String currentUser;
+    private BukuRepository bukuRepo = new BukuRepository();
+    private PinjamRepository pinjamRepo = new PinjamRepository();
 
     /**
      * Creates new form KatalogUser
      */
-    public KatalogUser() {
+    public KatalogUser(String userId) {
+        this.currentUser = userId;
         initComponents();
+        jPanel6.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        loadKatalog("Semua");
         setDarkMode(DarkMode.isDarkMode);
+    }
+
+    public KatalogUser() {
+        this("GUEST");
+    }
+
+    private void loadKatalog(String keyword) {
+        jPanel6.removeAll();
+
+        List<Buku> listBuku;
+        if (keyword.equals("Semua") || keyword.isEmpty()) {
+            listBuku = bukuRepo.getAllBuku();
+        } else {
+            listBuku = bukuRepo.cariBuku(keyword);
+        }
+
+        for (Buku buku : listBuku) {
+            JPanel card = createKatalogCard(buku.getId_buku(), buku.getNama_buku(), buku.getPenulis(), buku.getStok());
+            jPanel6.add(card);
+        }
+
+        jPanel6.revalidate();
+        jPanel6.repaint();
+    }
+
+    private JPanel createKatalogCard(String id, String judul, String penulis, int stok) {
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+
+        // KUNCI UKURAN FIX
+        Dimension cardSize = new Dimension(200, 180); // Agak lebih tinggi karena ada Stok
+        panel.setPreferredSize(cardSize);
+        panel.setMinimumSize(cardSize);
+        panel.setMaximumSize(cardSize);
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        // Styling Label
+        JLabel lblJudul = new JLabel(judul);
+        lblJudul.setFont(new Font("Serif", Font.BOLD, 14));
+        lblJudul.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblPenulis = new JLabel(penulis);
+        lblPenulis.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblStok = new JLabel("Stok: " + stok);
+        lblStok.setAlignmentX(Component.CENTER_ALIGNMENT);
+        if(stok <= 0) lblStok.setForeground(Color.RED);
+
+        JButton btnPinjam = new JButton("Pinjam");
+        btnPinjam.setBackground(new Color(0, 204, 0));
+        btnPinjam.setForeground(Color.BLACK);
+        btnPinjam.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        if (stok <= 0) {
+            btnPinjam.setEnabled(false);
+            btnPinjam.setText("Habis");
+            btnPinjam.setBackground(Color.GRAY);
+        }
+
+        btnPinjam.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Pinjam buku " + judul + "?");
+            if(confirm == JOptionPane.YES_OPTION) {
+                boolean success = pinjamRepo.insertPinjam(currentUser, id, 1);
+                if(success) {
+                    bukuRepo.changeStock(id, stok - 1);
+                    JOptionPane.showMessageDialog(this, "Berhasil dipinjam!");
+                    loadKatalog(jTextField1.getText().equals("Cari Buku atau Penulis") ? "Semua" : jTextField1.getText());
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal meminjam.");
+                }
+            }
+        });
+
+        panel.add(Box.createVerticalStrut(15)); // Margin atas
+        panel.add(lblJudul);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(lblPenulis);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(lblStok);
+        panel.add(Box.createVerticalGlue());
+        panel.add(btnPinjam);
+        panel.add(Box.createVerticalStrut(15));
+
+        return panel;
     }
 
     /**
@@ -544,6 +644,8 @@ public class KatalogUser extends javax.swing.JFrame {
 
     private void CariBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CariBukuActionPerformed
         // TODO add your handling code here:
+        String keyword = jTextField1.getText();
+        loadKatalog(keyword);
     }//GEN-LAST:event_CariBukuActionPerformed
 
     private void jButton1Pinjam1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1Pinjam1ActionPerformed
@@ -568,14 +670,19 @@ public class KatalogUser extends javax.swing.JFrame {
 
     private void tambahBtn4HomeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBtn4HomeBtnActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new DashboardUser(currentUser).setVisible(true);
     }//GEN-LAST:event_tambahBtn4HomeBtnActionPerformed
 
     private void editBtn6KatalogBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn6KatalogBtnActionPerformed
         // TODO add your handling code here:
+        loadKatalog("Semua");
     }//GEN-LAST:event_editBtn6KatalogBtnActionPerformed
 
     private void editBtn7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn7ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new PeminjamanUser(currentUser).setVisible(true);
     }//GEN-LAST:event_editBtn7ActionPerformed
 
     private void editBtn8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtn8ActionPerformed

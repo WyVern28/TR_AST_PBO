@@ -6,12 +6,20 @@ package com.mycompany.tr_ast_pbo.user;
 
 import com.mycompany.tr_ast_pbo.loginPage;
 import com.mycompany.tr_ast_pbo.DarkMode;
+import DTO.PinjamDTO;
+import objek.Buku;
+import repo.BukuRepository;
+import repo.PinjamRepository;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,13 +30,130 @@ import java.util.logging.Logger;
 public class DashboardUser extends JFrame {
 
     private static final Logger logger = Logger.getLogger(DashboardUser.class.getName());
+    private String currentUser;
+
+    private BukuRepository bukuRepo = new BukuRepository();
+    private PinjamRepository pinjamRepo = new PinjamRepository();
 
     /**
      * Creates new form DashboardUser
      */
     public DashboardUser(String username) {
+        this.currentUser = username;
         initComponents();
+        jPanel6.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        loadDataRekomendasi();
+        loadStatistik();
         setDarkMode(DarkMode.isDarkMode);
+    }
+
+    private void loadDataRekomendasi() {
+        jPanel6.removeAll();
+        List<Buku> listBuku = bukuRepo.getAllBuku();
+
+        int limit = Math.min(listBuku.size(), 4);
+
+        for (int i = 0; i < limit; i++) {
+            Buku buku = listBuku.get(i);
+            JPanel card = createBookCard(buku.getId_buku(), buku.getNama_buku(), buku.getPenulis());
+            jPanel6.add(card);
+        }
+
+        jPanel6.revalidate();
+        jPanel6.repaint();
+    }
+
+    private void loadStatistik() {
+        List<PinjamDTO> listPinjam = pinjamRepo.getPinjamByAnggota(currentUser);
+
+        int bukuDipinjam = 0;
+        long deadlineTerdekat = -1;
+        int bukuDikembalikan = 0;
+
+        LocalDate today = LocalDate.now();
+
+        for (PinjamDTO pinjam : listPinjam) {
+            if ("DIPINJAM".equalsIgnoreCase(pinjam.getStatus())) {
+                bukuDipinjam += pinjam.getJumlah_buku();
+
+                try {
+                    LocalDate tglDeadline = LocalDate.parse(pinjam.getDeadline());
+                    long daysBetween = ChronoUnit.DAYS.between(today, tglDeadline);
+
+                    if (deadlineTerdekat == -1 || daysBetween < deadlineTerdekat) {
+                        deadlineTerdekat = daysBetween;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        jLabel1.setText(String.valueOf(bukuDipinjam));
+
+        if (deadlineTerdekat != -1) {
+            jLabel3.setText(deadlineTerdekat + " Hari");
+        } else {
+            jLabel3.setText("-");
+        }
+        jLabel5.setText("-");
+    }
+
+    private JPanel createBookCard(String idBuku, String judul, String penulis) {
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+
+        // KUNCI UKURAN KARTU AGAR TIDAK MELAR
+        Dimension cardSize = new Dimension(200, 160); // Sesuaikan ukuran di sini
+        panel.setPreferredSize(cardSize);
+        panel.setMinimumSize(cardSize);
+        panel.setMaximumSize(cardSize); // Penting agar BoxLayout tidak membuatnya melar
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel lblJudul = new JLabel(judul);
+        lblJudul.setFont(new Font("Serif", Font.BOLD, 14)); // Tambah Bold biar bagus
+
+        JLabel lblPenulis = new JLabel(penulis);
+        lblPenulis.setFont(new Font("Serif", Font.PLAIN, 12));
+
+        JButton btnPinjam = new JButton("Pinjam");
+        btnPinjam.setBackground(new Color(0, 204, 0));
+        btnPinjam.setForeground(Color.BLACK);
+
+        btnPinjam.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Pinjam buku " + judul + "?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean success = pinjamRepo.insertPinjam(currentUser, idBuku, 1);
+
+                if(success) {
+                    Buku b = bukuRepo.getBukuById(idBuku);
+                    if(b != null) {
+                        bukuRepo.changeStock(idBuku, b.getStok() - 1);
+                    }
+
+                    JOptionPane.showMessageDialog(this, "Berhasil meminjam!");
+                    loadStatistik();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal meminjam (Stok habis/Error DB)");
+                }
+            }
+        });
+
+        lblJudul.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblPenulis.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnPinjam.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(lblJudul);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(lblPenulis);
+
+        panel.add(Box.createVerticalGlue());
+
+        panel.add(btnPinjam);
+        panel.add(Box.createVerticalStrut(15));
+
+        return panel;
     }
 
     /**
@@ -584,14 +709,20 @@ public class DashboardUser extends JFrame {
 
     private void HomeBtnActionPerformed(ActionEvent evt) {//GEN-FIRST:event_HomeBtnActionPerformed
         // TODO add your handling code here:
+        loadDataRekomendasi();
+        loadStatistik();
     }//GEN-LAST:event_HomeBtnActionPerformed
 
     private void KatalogBtnActionPerformed(ActionEvent evt) {//GEN-FIRST:event_KatalogBtnActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new KatalogUser(currentUser).setVisible(true);
     }//GEN-LAST:event_KatalogBtnActionPerformed
 
     private void editBtn1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_editBtn1ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        new PeminjamanUser(currentUser).setVisible(true);
     }//GEN-LAST:event_editBtn1ActionPerformed
 
     private void editBtn2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_editBtn2ActionPerformed
