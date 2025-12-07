@@ -1,3 +1,4 @@
-logic\LoginLogic.class
 logic\FiturAdmin.class
+logic\LoginLogic.class
+logic\FiturUser.class
 logic\CreateObject.class
