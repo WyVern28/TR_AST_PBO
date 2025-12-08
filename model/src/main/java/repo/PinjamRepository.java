@@ -102,4 +102,20 @@ public class PinjamRepository {
         } catch (SQLException e) { e.printStackTrace(); }
         return listPinjam;
     }
+
+    public int getKembalikan(String id_user){
+        String sql = "select count(id_buku) from pinjam where id_anggota = ? and status = 'DIKEMBALIKAN';";
+        int rowUpdate = 0;
+        try (Connection conn = db_con.getConn();PreparedStatement prep = conn.prepareStatement(sql)) {
+            prep.setString(1, id_user);
+            ResultSet res = prep.executeQuery();
+            if(res.next()){
+                rowUpdate = res.getInt(1);
+            }
+        } catch (SQLException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return rowUpdate;
+    }
 }

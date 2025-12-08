@@ -68,7 +68,7 @@ public class DashboardUser extends JFrame {
 
         int bukuDipinjam = 0;
         long deadlineTerdekat = -1;
-        int bukuDikembalikan = 0;
+        int bukuDikembalikan = pinjamRepo.getKembalikan(currentUser);
 
         LocalDate today = LocalDate.now();
 
@@ -95,7 +95,7 @@ public class DashboardUser extends JFrame {
         } else {
             jLabel3.setText("-");
         }
-        jLabel5.setText("-");
+        jLabel5.setText(String.valueOf(bukuDikembalikan));
     }
 
     private JPanel createBookCard(String idBuku, String judul, String penulis) {
