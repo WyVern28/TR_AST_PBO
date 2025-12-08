@@ -807,6 +807,7 @@ public class adminPage extends javax.swing.JFrame {
                 return false;
             }
         };
+        tableAnggota.setDragEnabled(false);
         
         List<Anggota> listAnggota = fiturAdmin.getAllAnggota();
         for(Anggota anggota : listAnggota) {
@@ -818,6 +819,7 @@ public class adminPage extends javax.swing.JFrame {
         }
         
         tableAnggota.setModel(model);
+        tableAnggota.getTableHeader().setReorderingAllowed(false);
     }
     
     private void loadTableBuku() {
@@ -827,7 +829,7 @@ public class adminPage extends javax.swing.JFrame {
                 return false;
             }
         };
-        
+        tableBuku.setDragEnabled(false);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Buku> listBuku = fiturAdmin.getAllBuku();
         for(Buku buku : listBuku) {
@@ -841,6 +843,7 @@ public class adminPage extends javax.swing.JFrame {
         }
         
         tableBuku.setModel(model);
+        tableBuku.getTableHeader().setReorderingAllowed(false);
     }
     
     private void loadTablePeminjam() {
@@ -853,6 +856,8 @@ public class adminPage extends javax.swing.JFrame {
                 return false;
             }
         };
+        tablePeminjam.setDragEnabled(false);
+        tablePeminjam.getTableHeader().setReorderingAllowed(false);
         
         List<PinjamDTO> listPinjam = fiturAdmin.getAllPinjam();
         if(listPinjam != null && !listPinjam.isEmpty()) {
